@@ -5,6 +5,7 @@ import data.Regex.Con
 import data.Regex.Empty
 import data.Regex.Let
 import data.Regex.Star
+import data.Regex.Var
 import scala.util.Try
 import scala.util.parsing.combinator.Parsers
 import scala.util.parsing.input.CharSequenceReader
@@ -21,6 +22,7 @@ object RegexParser extends Parsers {
   lazy val OPEN = chr('(')
   lazy val CLOSE = chr(')')
   lazy val BACKSLASH = chr('\\')
+  lazy val COLON = chr(':')
 
   lazy val END_OF_FILE = not(any)
 
@@ -45,19 +47,24 @@ object RegexParser extends Parsers {
       | Primary
   )
 
+  lazy val Variable: Parser[Regex] = CHAR.+ ~ COLON ~ Expression ^^ {
+    case (n ~ _ ~ r) => Var(n.foldLeft("")((a, y) => a + y), r)
+  }
+
   lazy val Primary: Parser[Regex] = (
     Escape
+      | OPEN ~> Variable <~ CLOSE
       | OPEN ~> Expression <~ CLOSE
       | Literal
   )
 
-  lazy val Escape: Parser[Regex] = BACKSLASH ~> (BAR | QUESTION | STAR | OPEN | CLOSE | BACKSLASH) ^^ { e => Let(e) }
+  lazy val Escape: Parser[Regex] = BACKSLASH ~> (BAR | QUESTION | STAR | OPEN | CLOSE | COLON | BACKSLASH) ^^ { e => Let(e) }
 
   lazy val Literal: Parser[Regex] = CHAR ^^ {
     case c => Let(c)
   }
 
-  lazy val CHAR: Parser[Char] = not(BAR | QUESTION | STAR | OPEN | CLOSE | BACKSLASH) ~> any
+  lazy val CHAR: Parser[Char] = not(BAR | QUESTION | STAR | OPEN | CLOSE | BACKSLASH | COLON) ~> any
 
   def parse(input: String): Try[Regex] = Try(
     Regex(StreamReader(new StringReader(input))) match {

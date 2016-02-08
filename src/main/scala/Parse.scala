@@ -11,6 +11,8 @@ import data.Regex.Con
 import data.Regex.Epsilon
 import data.Regex.Let
 import data.Regex.Star
+import data.Regex.Var
+import data.Word
 import scala.util.Try
 
 object Parse {
@@ -29,6 +31,7 @@ object Parse {
   }
 
   private def inject(r: Regex, l: Char, t: ParseTree): ParseTree = (r, t) match {
+    case (Var(_, r), t) => inject(r, l, t)
     case (Star(r), Pair(v, vs)) => Cons(inject(r, l, v), vs)
     case (Con(r1, r2), t) => t match {
       case Pair(v1, v2) => Pair(inject(r1, l, v1), v2)
@@ -45,7 +48,7 @@ object Parse {
     case e => throw new RuntimeException(s"error in inject: $e")
   }
 
-  def parse(r: Regex, str: List[Char]): Try[ParseTree] =
+  def parse(r: Regex, str: Word): Try[ParseTree] =
     str match {
       case Nil if Helper.canEmpty(r) => Try(makeEps(r))
       case l::w => parse(Derivative.derivative(r, l), w).map(t => inject(r, l, t))

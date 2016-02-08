@@ -5,6 +5,7 @@ import data.Regex.Empty
 import data.Regex.Epsilon
 import data.Regex.Let
 import data.Regex.Star
+import data.Regex.Var
 
 object Derivative {
   def derivative(r: Regex, l: Char): Regex = r match {
@@ -18,5 +19,6 @@ object Derivative {
       else
         Con(derivative(r1, l), r2)
     case Star(r) => Con(derivative(r, l), Star(r))
+    case Var(_, r) => derivative(r, l)
   }
 }

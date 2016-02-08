@@ -13,6 +13,7 @@ import data.Regex.Empty
 import data.Regex.Epsilon
 import data.Regex.Let
 import data.Regex.Star
+import data.Regex.Var
 
 object Helper {
   def canEmpty(r: Regex): Boolean = r match {
@@ -22,6 +23,7 @@ object Helper {
     case Con(r1, r2) => canEmpty(r1) && canEmpty(r2)
     case Star(r) => true
     case Empty => false
+    case Var(_, r) => canEmpty(r)
   }
 
   def pp(t: ParseTree): String = t match {

@@ -2,6 +2,7 @@ package data
 
 sealed trait Regex
 object Regex {
+  case class Var(n: String, r: Regex) extends Regex
   case class Let(l: Char) extends Regex
   case class Alt(r1: Regex, r2: Regex) extends Regex
   case class Star(r: Regex) extends Regex
