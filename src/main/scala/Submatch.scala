@@ -27,13 +27,13 @@ object Submatch {
 
   def submatch(t: ParseTree, r: Regex): Set[Map[String, Word]] = (t, r) match {
     case (Void, Epsilon) => Set.empty
-    case (Lit(l), Let(c)) => if (l == c) Set.empty else throw new RuntimeException("error")
+    case (Lit(l), Let(c)) => if (l == c) Set.empty else throw new RuntimeException("error in submatch")
     case (Nil, Star(_)) => Set.empty
     case (Cons(v, vs), Star(r)) => submatch(v, r) ++ submatch(vs, Star(r))
     case (Pair(v1, v2), Con(r1, r2)) => submatch(v1, r1) ++ submatch(v2, r2)
     case (Left(v), Alt(r1, _)) => submatch(v, r1)
     case (Right(v), Alt(_, r2)) => submatch(v, r2)
-    case (v, Var(n, r)) => submatch(v, r) ++ Set(Map(n -> flatten(v)))
+    case (v, Var(n, r)) => submatch(v, r) + Map(n -> flatten(v))
     case e => throw new RuntimeException(s"error in submatch: $e")
   }
 }
