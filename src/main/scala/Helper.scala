@@ -28,7 +28,7 @@ object Helper {
 
   def pp(t: ParseTree): String = t match {
     case Void => "()"
-    case Nil => "[]"
+    case Nil => "nil"
     case Lit(l) => s"$l"
     case Pair(t1, t2) => s"(${pp(t1)}, ${pp(t2)})"
     case Left(t) => s"Left(${pp(t)})"

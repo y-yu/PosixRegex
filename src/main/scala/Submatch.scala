@@ -33,7 +33,7 @@ object Submatch {
     case (Pair(v1, v2), Con(r1, r2)) => submatch(v1, r1) ++ submatch(v2, r2)
     case (Left(v), Alt(r1, _)) => submatch(v, r1)
     case (Right(v), Alt(_, r2)) => submatch(v, r2)
-    case (v, Var(n, r)) => submatch(v, r) + Map(n -> flatten(v))
+    case (v, Var(n, r)) => Set(Map(n -> flatten(v))) ++ submatch(v, r)
     case e => throw new RuntimeException(s"error in submatch: $e")
   }
 }

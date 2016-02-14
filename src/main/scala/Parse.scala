@@ -25,7 +25,7 @@ object Parse {
       else if (Helper.canEmpty(r2))
         Right(makeEps(r2))
       else
-        throw new RuntimeException("error of the alternation in makeEps")
+        throw new RuntimeException("error of he alternation in makeEps")
     case Epsilon => Void
     case e => throw new RuntimeException(s"error in makeEps: $e")
   }
@@ -44,7 +44,7 @@ object Parse {
       case Right(v2) => Right(inject(r2, l, v2))
       case e => throw new RuntimeException(s"error of the alternation in inject: $e")
     }
-    case (Let(l), Void) => Lit(l)
+    case (Let(c), Void) => if (l == c) Lit(l) else throw new RuntimeException(s"error of the Letter in inject")
     case e => throw new RuntimeException(s"error in inject: $e")
   }
 
